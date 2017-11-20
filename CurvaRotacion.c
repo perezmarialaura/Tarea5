@@ -15,7 +15,7 @@ double get_random(void);
 
 int main(void){
   srand(time(NULL)); //sin esto, el rand no cambia al compilar varias veces
-  double mb_prime, md_prime, mh_prime, alpha, beta, l_prime, l_init, delta;
+  double l_best, mb_best, md_best, mh_best, mb_prime, md_prime, mh_prime, alpha, beta, l_prime, l_init, delta;
   double *r_obs = malloc(N*sizeof(double));
   double *v_obs = malloc(N*sizeof(double));
   double *v_init = malloc(N*sizeof(double));
@@ -77,12 +77,18 @@ int main(void){
         }
       }
     }
-
-  FILE *results =fopen("walks.dat", "w");
-  for (i = 0; i < n; i++){
-    fprintf(results, "%lf %lf %lf % lf \n", mb_walk[i], md_walk[i], mh_walk[i], l_walk[i]);
+l_best = l_walk[0];
+for (i = 1; i < n; i++){
+  if (l_walk[i] > l_best){
+    l_best = l_walk[i];
+    mb_best = mb_walk[i];
+    md_best = md_walk[i];
+    mh_best = mh_walk[i];
   }
-    fclose(results);
+}
+FILE *results = fopen("M.dat","w");
+fprintf(results, "%f %f %f \n", mb_best, md_best, mh_best);
+fclose(results);
 
   return 0;
 }
