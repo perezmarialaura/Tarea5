@@ -13,6 +13,10 @@ R = data[:, 0]
 V = data[:, 1]
 mb, md, mh = np.genfromtxt("M.dat", delimiter=" ", unpack = True)
 plt.figure()
-plt.scatter(R,V)
-plt.plot(R,V_obs(R, mb,md,mh))
-plt.savefig("bla.png")
+plt.title("Curvas de rotación de una galaxia")
+plt.scatter(R,V, label="Datos")
+plt.plot(R,V_obs(R, mb,md,mh), label="Fit bayesiano: Mb = "+str(mb)+", Md = "+str(md)+", Mh = "+str(mh),linewidth=2.0)
+plt.legend(prop={'size': 10})
+plt.xlabel("Distancia al centro de la galaxia (kpc)")
+plt.ylabel("Velocidad de rotación (km/s)")
+plt.savefig("galaxias.png")
