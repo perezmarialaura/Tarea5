@@ -15,7 +15,7 @@ double get_random(void);
 
 int main(void){
   srand(time(NULL)); //sin esto, el rand no cambia al compilar varias veces
-  double l_best, mb_best, md_best, mh_best, mb_prime, md_prime, mh_prime, alpha, beta, l_prime, l_init, delta;
+  double l_best, mb_best, md_best, mh_best, mb_prime, md_prime, mh_prime, alpha, beta, l_prime, l_init, deltab, deltad, deltah;
   double *r_obs = malloc(N*sizeof(double));
   double *v_obs = malloc(N*sizeof(double));
   double *v_init = malloc(N*sizeof(double));
@@ -36,17 +36,19 @@ int main(void){
   }
   fclose(data);
   //inicializo valores
-  mb_walk[0] = get_random()*1000;
-  md_walk[0] = get_random()*10000;
-  mh_walk[0] = get_random()*100000;
+  mb_walk[0] = 400; //Para comenzar cercano, se estiman los iniciales como un primer guess y se itera cerca a ellos
+  md_walk[0] = 4500;
+  mh_walk[0] = 20000;
 
   v_init = model(r_obs, mb_walk[0], md_walk[0], mh_walk[0]);
   l_walk[0] = likelihood(v_obs, v_init);
-  delta = 100;
-  for (i = 1; i < n; i++){
-      mb_prime = mb_walk[i-1] + 2*delta*(get_random()-0.5);
-      md_prime = md_walk[i-1] + 2*delta*(get_random()-0.5);
-      mh_prime = mh_walk[i-1] + 2*delta*(get_random()-0.5);
+  deltab = 5; //como tienen diferentes ordenes deberían variar los delta
+  deltad = 50;
+  deltah = 100;
+  for (i = 1; i < n; i++){ //Algoritmo de MonteCarlo
+      mb_prime = mb_walk[i-1] + 2*deltab*(get_random()-0.5);
+      md_prime = md_walk[i-1] + 2*deltad*(get_random()-0.5);
+      mh_prime = mh_walk[i-1] + 2*deltah*(get_random()-0.5);
 
       v_init = model(r_obs, mb_walk[i-1], md_walk[i-1], mh_walk[i-1]);
       v_prime = model(r_obs, mb_prime, md_prime, mh_prime);
@@ -77,6 +79,7 @@ int main(void){
         }
       }
     }
+    //busco el mayor likelihood y sus M correspondientes
 l_best = l_walk[0];
 for (i = 1; i < n; i++){
   if (l_walk[i] > l_best){
@@ -86,6 +89,9 @@ for (i = 1; i < n; i++){
     mh_best = mh_walk[i];
   }
 }
+//impresión en consola
+printf("%s %f %s %f %s %f \n", "Mb= ",mb_best, ", Md= ", md_best, ", Mh = ", mh_best);
+//.dat que usará python
 FILE *results = fopen("M.dat","w");
 fprintf(results, "%f %f %f \n", mb_best, md_best, mh_best);
 fclose(results);
