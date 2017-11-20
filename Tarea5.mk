@@ -1,3 +1,6 @@
+*.pdf: *.png
+	pdflatex Results_hw5.tex
+
 *.png: M.dat
 	python Plots.py
 
@@ -8,4 +11,4 @@ compila: RadialVelocities.dat
 	gcc -lm CurvaRotacion.c
 
 clean:
-	rm -f M.dat *.png a.out
+	rm -f M.dat *.png a.out *.aux *.log
