@@ -7,7 +7,7 @@
 #define Ad 0.3105
 #define Ah 64.3 //en kpc
 #define N 300 //num datos
-#define n 10000 //num iteraciones
+#define n 100000 //num iteraciones
 
 double likelihood(double *v_obs, double *v_model);
 double *model(double *R_obs, double Mb, double Md, double Mh);
@@ -36,15 +36,15 @@ int main(void){
   }
   fclose(data);
   //inicializo valores
-  mb_walk[0] = 400; //Para comenzar cercano, se estiman los iniciales como un primer guess y se itera cerca a ellos
-  md_walk[0] = 4500;
-  mh_walk[0] = 20000;
+  mb_walk[0] = 300; //Para comenzar cercano, se estiman los iniciales como un primer guess
+  md_walk[0] = 7000;
+  mh_walk[0] = 10000;
 
   v_init = model(r_obs, mb_walk[0], md_walk[0], mh_walk[0]);
   l_walk[0] = likelihood(v_obs, v_init);
-  deltab = 5; //como tienen diferentes ordenes deberían variar los delta
-  deltad = 50;
-  deltah = 100;
+  deltab = 0.05; //como tienen diferentes ordenes deberían variar los delta
+  deltad = 1;
+  deltah = 5;
   for (i = 1; i < n; i++){ //Algoritmo de MonteCarlo
       mb_prime = mb_walk[i-1] + 2*deltab*(get_random()-0.5);
       md_prime = md_walk[i-1] + 2*deltad*(get_random()-0.5);
